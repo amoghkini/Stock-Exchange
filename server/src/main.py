@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
-from home.routes import home_router
+from api import api_router
+
 
 VERSION = "0.1"
 app = FastAPI(
@@ -11,5 +12,4 @@ app = FastAPI(
     redoc_url=f"/api/{VERSION}/redoc",
 )
 
-
-app.include_router(home_router, prefix='/api/v1', tags=['home'])
+app.include_router(api_router)
