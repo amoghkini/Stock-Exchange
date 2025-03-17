@@ -80,3 +80,8 @@ Integrates with banks and payment providers to process fiat deposits and withdra
 17. Data Archival and Backup Service:
 
 Archives historical data and provides backup and restoration capabilities.
+
+18. Admin service:
+
+Provides admin users with an interface to manage users, configure fees, and monitor the platform.
+Displays metrics, statistics, and system health.
