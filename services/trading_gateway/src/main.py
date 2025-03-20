@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.api.api import api_router
+from api.api import api_router
 
 
 VERSION = "0.1"
