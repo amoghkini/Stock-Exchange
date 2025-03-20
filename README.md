@@ -1,11 +1,11 @@
 # Stock-Exchange
 
 docker commands
-docker-compose down --volumes --remove-orphans
-docker system prune -a --volumes
+1. docker-compose down --volumes --remove-orphans
+2. docker system prune -a --volumes
 
-docker-compose up -d
-docker-compose -f docker-compose-dev.yaml up -d
+3. docker-compose up -d
+4. docker-compose -f docker-compose-dev.yaml up -d
 
 
 
