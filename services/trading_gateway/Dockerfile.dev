@@ -1,0 +1,37 @@
+FROM python:3.13-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a virtual environment
+RUN python -m venv /app/venv
+
+# Activate the virtual environment and upgrade pip
+RUN /app/venv/bin/pip install --upgrade pip
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install dependencies within the virtual environment
+RUN /app/venv/bin/pip install -r requirements.txt
+
+# Copy the application code
+COPY . .
+
+# Copy the entrypoint script and give execute permissions
+COPY bin/docker-entrypoint.dev.sh /app/bin/docker-entrypoint.dev.sh
+RUN chmod +x /app/bin/docker-entrypoint.dev.sh
+
+# Activate the virtual environment automatically
+ENV PATH="/app/venv/bin:$PATH"
+
+# Expose port 8000 for FastAPI
+EXPOSE 8000
+
+# Set the entrypoint script
+ENTRYPOINT ["/app/bin/docker-entrypoint.dev.sh"]

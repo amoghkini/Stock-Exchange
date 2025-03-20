@@ -1,5 +1,14 @@
 # Stock-Exchange
 
+docker commands
+docker-compose down --volumes --remove-orphans
+docker system prune -a --volumes
+
+docker-compose up -d
+docker-compose -f docker-compose-dev.yaml up -d
+
+
+
 a list of possible microservices you might need to build an exchange platform:
 
 1. User Management Service:

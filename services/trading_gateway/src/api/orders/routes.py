@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
-from api.orders.schemas import OrderCreateModel
+from src.api.orders.schemas import OrderCreateModel
 
 
 router = APIRouter(prefix="/api/v1/orders")
