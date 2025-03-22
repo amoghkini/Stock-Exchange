@@ -13,7 +13,39 @@ services:
       - ./services/trading_gateway/.env
     networks:
       - exchange-network
+    depends_on:
+      - trading-gateway-redis
+      - exchange-redis
+  
+  trading-gateway-redis:
+    image: redis:7
+    container_name: trading_gateway_redis
+    restart: always
+    ports:
+      - "6381:6379"
+    volumes:
+      - trading_gateway_redis_data:/data
+    networks:
+      - exchange-network
+    command: redis-server # No password here for dev.
+    
+  exchange-redis:
+    image: redis:7
+    container_name: exchange_redis
+    restart: always
+    ports:
+      - "6380:6379"
+    volumes:
+      - exchange_redis_data:/data
+    networks:
+      - exchange-network
+    command: redis-server # No password here for dev.
+
+volumes:
+  trading_gateway_redis_data:
+  exchange_redis_data:
 
 networks:
   exchange-network:
     driver: bridge
+
