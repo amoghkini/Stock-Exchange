@@ -16,6 +16,19 @@ services:
     depends_on:
       - trading-gateway-redis
       - exchange-redis
+
+  order-matching-engine:
+    build:
+      context: ./services/order_matching_engine
+      dockerfile: Dockerfile.prod
+    container_name: order_matching_engine
+    restart: always
+    env_file:
+      - ./services/order_matching_engine/.env
+    networks:
+      - exchange-network
+    depends_on:
+      - exchange-redis
   
   trading-gateway-redis:
     image: redis:7
@@ -48,4 +61,3 @@ volumes:
 networks:
   exchange-network:
     driver: bridge
-

@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile.dev
     container_name: trading_gateway
     restart: always
-    command: ./bin/docker-entrypoint.dev.sh
     ports:
       - "8000:8000"
     env_file:
@@ -17,6 +16,19 @@ services:
       - trading-gateway-redis
       - exchange-redis
   
+  order-matching-engine:
+    build:
+      context: ./services/order_matching_engine
+      dockerfile: Dockerfile.dev
+    container_name: order_matching_engine
+    restart: always
+    env_file:
+      - ./services/order_matching_engine/.env
+    networks:
+      - exchange-network
+    depends_on:
+      - exchange-redis
+
   trading-gateway-redis:
     image: redis:7
     container_name: trading_gateway_redis
