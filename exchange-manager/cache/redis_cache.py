@@ -100,6 +100,41 @@ class AsyncRedisCache:
         value = await self.redis.get(key)
         return pickle.loads(value) if value else None
 
+    async def exists(self, key: str) -> bool:
+        """Check if a key exists in Redis asynchronously."""
+        return await self.redis.exists(key)
+    
+    async def enqueue(self, key: str, value: Any) -> None:
+        """Enqueue a value in Redis asynchronously."""
+        await self.redis.lpush(key, pickle.dumps(value))
+    
+    async def dequeue(
+        self, 
+        key: str,
+        block: bool = True
+    ) -> Optional[Any]:
+        """Dequeue a value from Redis asynchronously."""
+        if block:
+            value = await self.redis.blpop(key)
+        else:
+            value = await self.redis.lpop(key)
+        return pickle.loads(value) if value else None
+        
+    async def dequeue_all(
+        self, 
+        key: str
+    ) -> list[Any]:
+        """Dequeue all values from Redis asynchronously."""
+        values = await self.redis.lrange(key, 0, -1)
+        return [pickle.loads(value) for value in values]
+    
+    async def llen(
+        self,
+        key: str
+    ) -> int:
+        """Get the length of a list in Redis asynchronously."""
+        return await self.redis.llen(key)
+    
     async def delete(self, key: str) -> None:
         """Delete a key from Redis asynchronously."""
         await self.redis.delete(key)
@@ -107,5 +142,3 @@ class AsyncRedisCache:
     async def clear(self) -> None:
         """Clear all keys in Redis asynchronously."""
         await self.redis.flushdb()
-
-    
