@@ -20,7 +20,7 @@ class AsyncRedisCache:
 
         # sync call to test connection
         self.test_connection()
-
+    
     def __connect(
         self,
         host: str,

@@ -5,7 +5,7 @@ from typing import Literal
 from cache.cache import Cache
 
 
-class BaseCache:
+class BaseCache(ABC):
     
     def __init__(
         self,
