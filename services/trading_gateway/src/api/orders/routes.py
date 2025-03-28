@@ -2,20 +2,21 @@ from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
 from api.orders.schemas import OrderCreateModel
+from api.orders.service import OrderService
 
 
 router = APIRouter(prefix="/api/v1/orders")
+service = OrderService()
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_order(
     order_data: OrderCreateModel
 ) -> JSONResponse:
-    print(order_data)
-    add_to_queue(order_data)
+    response = await service.place_order(order_data)
     return JSONResponse(
         content={
-            "message": "Order placed successully"
+            "message": "Finally Order placed successully"
         }
     )
     
