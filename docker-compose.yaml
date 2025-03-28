@@ -2,8 +2,8 @@ version: '3.8'
 services:
   trading-gateway:
     build:
-      context: ./services/trading_gateway
-      dockerfile: Dockerfile.prod
+      context: .
+      dockerfile: services/trading_gateway/Dockerfile.prod
     container_name: trading_gateway
     restart: always
     command: ./bin/docker-entrypoint.prod.sh

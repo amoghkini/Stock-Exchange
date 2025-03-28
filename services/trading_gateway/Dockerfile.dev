@@ -15,16 +15,17 @@ RUN python -m venv /app/venv
 RUN /app/venv/bin/pip install --upgrade pip
 
 # Copy requirements file
-COPY requirements.txt .
+COPY services/trading_gateway/requirements.txt .
 
 # Install dependencies within the virtual environment
 RUN /app/venv/bin/pip install -r requirements.txt
 
 # Copy the application code
-COPY . .
+COPY services/trading_gateway/. .
+COPY exchange_manager /app/src/exchange_manager
 
 # Copy the entrypoint script and give execute permissions
-COPY bin/docker-entrypoint.dev.sh /app/bin/docker-entrypoint.dev.sh
+COPY services/trading_gateway/bin/docker-entrypoint.dev.sh /app/bin/docker-entrypoint.dev.sh
 RUN chmod +x /app/bin/docker-entrypoint.dev.sh
 
 # Activate the virtual environment automatically
