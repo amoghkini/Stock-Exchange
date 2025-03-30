@@ -13,3 +13,4 @@ typing-extensions==4.12.2 ; python_version >= "3.12" and python_version < "4.0"
 uvicorn==0.34.0 ; python_version >= "3.12" and python_version < "4.0"
 gunicorn
 redis
+requests

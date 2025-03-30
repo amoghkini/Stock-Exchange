@@ -1,5 +1,27 @@
 version: '3.8'
 services:
+  eureka:
+    image: bitinit/eureka
+    container_name: eureka
+    restart: always
+    ports:
+      - "8761:8761"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - ENVIRONMENT=development
+    networks:
+      - exchange-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://eureka:8761/eureka/apps"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s 
+
   trading-gateway:
     build:
       context: .
@@ -13,8 +35,12 @@ services:
     networks:
       - exchange-network
     depends_on:
-      - trading-gateway-redis
-      - exchange-redis
+      eureka:
+        condition: service_healthy
+      trading-gateway-redis:
+        condition: service_started
+      exchange-redis:
+        condition: service_started
   
   order-matching-engine:
     build:
@@ -27,7 +53,8 @@ services:
     networks:
       - exchange-network
     depends_on:
-      - exchange-redis
+      exchange-redis:
+        condition: service_started
 
   trading-gateway-redis:
     image: redis:7
@@ -39,7 +66,7 @@ services:
       - trading_gateway_redis_data:/data
     networks:
       - exchange-network
-    command: redis-server # No password here for dev.
+    command: redis-server
     
   exchange-redis:
     image: redis:7
@@ -51,7 +78,7 @@ services:
       - exchange_redis_data:/data
     networks:
       - exchange-network
-    command: redis-server # No password here for dev.
+    command: redis-server
 
 volumes:
   trading_gateway_redis_data:
