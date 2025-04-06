@@ -1,23 +1,23 @@
-import redis
-import os
-    
-def read_from_queue():
-    
+import asyncio
+import logging
 
-    queue = redis.Redis(
-        host=os.getenv("QUEUE_REDIS_HOST", "exchange_redis"),
-        port=int(os.getenv("QUEUE_REDIS_PORT", 6379)),
-        db=0
-    )
-    print("Connected to Redis queue")
+from engine.order_matching_engine import OrderMatchingEngine
+from cache.redis_manager import RedisManager
+
+
+async def main():
+    engine = OrderMatchingEngine()
+    redis = RedisManager.get_instance()
+    # Two different processes for different consumers like order_queue, market_data_queue.
     while True:
-        # Get the latest order from the queue (blocking read)
-        order_data_json = queue.brpop("orders_queue")
-        print("Order fetched from queue:", order_data_json)
-        if order_data_json:
-            print("Order fetched from queue:", order_data_json[1].decode())
-            # Process the order here (convert from JSON if needed)
-
+        try:
+            order_data = await redis.order_lister()
+            if order_data:
+                await engine.process_order_queue(order_data)
+        except Exception as e:
+            logging.exception(f"Error processing order: {e}")
+        
+        
 if __name__ == "__main__":
-    print("Starting order matching engine...")
-    read_from_queue()
+    logging.info("Starting order matching engine...")
+    asyncio.run(main())

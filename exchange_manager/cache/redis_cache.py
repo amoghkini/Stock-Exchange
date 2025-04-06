@@ -17,9 +17,6 @@ class AsyncRedisCache:
         self.redis = self.__connect(host, port, db, password)
         
         logging.info("Redis cache initialized. Going to test the connection...")
-
-        # sync call to test connection
-        self.test_connection()
     
     def __connect(
         self,
@@ -27,13 +24,13 @@ class AsyncRedisCache:
         port: int,
         db: int,
         password: Optional[str] = None
-    ) -> aioredis.Redis:
+    ) -> aioredis.Redis: # type: ignore
         return aioredis.Redis(
             host=host,
             port=port,
             db=db,
             password=password
-        )
+        ) # type: ignore
 
     async def async_test_connection(self) -> bool:
         """Asynchronously test the connection to the Redis server."""
@@ -118,7 +115,8 @@ class AsyncRedisCache:
             value = await self.redis.blpop(key)
         else:
             value = await self.redis.lpop(key)
-        return pickle.loads(value) if value else None
+        logging.info(f"Dequeued value: {value}")
+        return pickle.loads(value[1]) if value else None
         
     async def dequeue_all(
         self, 
@@ -126,7 +124,7 @@ class AsyncRedisCache:
     ) -> list[Any]:
         """Dequeue all values from Redis asynchronously."""
         values = await self.redis.lrange(key, 0, -1)
-        return [pickle.loads(value) for value in values]
+        return [pickle.loads(value[1]) for value in values]
     
     async def llen(
         self,
@@ -142,3 +140,29 @@ class AsyncRedisCache:
     async def clear(self) -> None:
         """Clear all keys in Redis asynchronously."""
         await self.redis.flushdb()
+
+    async def publish(self, channel: str, message: Any) -> None:
+        """Publish a message to a channel asynchronously."""
+        await self.redis.publish(channel, pickle.dumps(message))
+    
+    async def subscribe(self, *channels: str):
+        """Subscribe to one or more channels asynchronously."""
+        pubsub = self.redis.pubsub()
+        await pubsub.subscribe(*channels)
+        logging.info(f"Subscribed to channels: {channels}")
+        return pubsub
+
+    async def unsubscribe(self, pubsub, *channels: str):
+        """Unsubscribe from one or more channels asynchronously."""
+        await pubsub.unsubscribe(*channels)
+        logging.info(f"Unsubscribed from channels: {channels}")
+        
+    async def listen(self, pubsub):
+        """Listen for messages on the subscribed channels."""
+        try:
+            async for message in pubsub.listen():
+                if message["type"] == "message":
+                    yield pickle.loads(message["data"])
+        except Exception as e:
+            logging.error(f"Error while listening to pubsub: {e}")
+            raise

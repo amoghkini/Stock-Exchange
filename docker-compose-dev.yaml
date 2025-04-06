@@ -43,9 +43,11 @@ services:
         condition: service_started
   
   order-matching-engine:
+    stdin_open: true
+    tty: true
     build:
-      context: ./services/order_matching_engine
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: services/order_matching_engine/Dockerfile.dev
     container_name: order_matching_engine
     restart: always
     env_file:
