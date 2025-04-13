@@ -1,0 +1,91 @@
+version: '3.8'
+services:
+  eureka:
+    image: bitinit/eureka
+    container_name: eureka
+    restart: always
+    ports:
+      - "8761:8761"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - ENVIRONMENT=development
+    networks:
+      - exchange-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://eureka:8761/eureka/apps"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s 
+
+  trading-gateway:
+    build:
+      context: .
+      dockerfile: services/trading_gateway/Dockerfile.dev
+    container_name: trading_gateway
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./services/trading_gateway/.env
+    networks:
+      - exchange-network
+    depends_on:
+      eureka:
+        condition: service_healthy
+      trading-gateway-redis:
+        condition: service_started
+      exchange-redis:
+        condition: service_started
+  
+  order-matching-engine:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: services/order_matching_engine/Dockerfile.dev
+    container_name: order_matching_engine
+    restart: always
+    env_file:
+      - ./services/order_matching_engine/.env
+    networks:
+      - exchange-network
+    depends_on:
+      exchange-redis:
+        condition: service_started
+
+  trading-gateway-redis:
+    image: redis:7
+    container_name: trading_gateway_redis
+    restart: always
+    ports:
+      - "6381:6379"
+    volumes:
+      - trading_gateway_redis_data:/data
+    networks:
+      - exchange-network
+    command: redis-server
+    
+  exchange-redis:
+    image: redis:7
+    container_name: exchange_redis
+    restart: always
+    ports:
+      - "6380:6379"
+    volumes:
+      - exchange_redis_data:/data
+    networks:
+      - exchange-network
+    command: redis-server
+
+volumes:
+  trading_gateway_redis_data:
+  exchange_redis_data:
+
+networks:
+  exchange-network:
+    driver: bridge
