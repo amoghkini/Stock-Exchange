@@ -9,6 +9,7 @@ docker commands
 
 
 
+TODO: 
 a list of possible microservices you might need to build an exchange platform:
 
 1. User Management Service:
