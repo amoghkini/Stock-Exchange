@@ -28,7 +28,7 @@ class RedisManager:
     def get_instance(cls) -> "RedisManager":
         if not cls.__instance:
             cls()
-        return cls.__instance
+        return cls.__instance  # type: ignore
     
     async def send_order_to_queue(self, data: dict[str, Any]) -> dict[str, Any]:
         logging.info("Going to add order to queue")
@@ -38,7 +38,11 @@ class RedisManager:
             "message": "Order placed successfully"
         }
     
-    async def one_shot_subscribe(self, channel: str) -> Any:
+    async def one_shot_subscribe(
+        self, 
+        channel: str
+    ) -> Any:
+        
         pubsub = await self.redis.subscribe(channel)
 
         try:
@@ -48,7 +52,10 @@ class RedisManager:
         finally:
             await pubsub.close()
         
-    async def send_order_and_await_for_fills(self, data: dict[str, Any]) -> dict[str, Any]:
+    async def send_order_and_await_for_fills(
+        self, 
+        data: dict[str, Any]
+    ) -> dict[str, Any]:
         await self.send_order_to_queue(data)
         logging.info("Order added to queue. Waiting for fills...")
         # subscribe to a channel and wait for messages
