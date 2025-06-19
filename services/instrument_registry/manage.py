@@ -1,13 +1,11 @@
-import os
-
 import click
-import pytest
-import shutil
+import os
+import sys
+import socket
 
 from instrument_registry.app.app import AppBuilder
-from instrument_registry.app.extensions import db
 
-app = AppBuilder().build()
+app = AppBuilder().build('instrument_registry')
 
 
 @click.group()
@@ -17,27 +15,20 @@ def cli():
 
 @cli.command()
 def run():
-    app.run()
+    """Run the Flask server if no other instance is using the port."""
+    port = int(os.environ.get("PORT", 5000))
+
+    if is_port_in_use(port):
+        click.echo(f"❌ Port {port} is already in use. Is another instance running?")
+        sys.exit(1)
+
+    click.echo(f"✅ Starting server on http://127.0.0.1:{port}")
+    app.run(host="0.0.0.0", port=port)
 
 
-@cli.command()
-def test():
-    exit(pytest.main(["tests"]))
-
-
-@cli.command()
-def clear_cache():
-    for root, dirs, _ in os.walk("."):
-        for d in dirs:
-            if d == "__pycache__":
-                shutil.rmtree(os.path.join(root, d))
-    print("✅ Cleared __pycache__")
-
-
-@cli.command()
-def create_db():
-    with app.app_context():
-        db.create_all()
+def is_port_in_use(port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(("127.0.0.1", port)) == 0
 
 
 if __name__ == "__main__":
