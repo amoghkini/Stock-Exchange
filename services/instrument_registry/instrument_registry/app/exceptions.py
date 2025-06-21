@@ -10,5 +10,5 @@ class NoInstalledBlueprintException(Exception):
     pass
 
 
-class NoRouteModuleException(Exception):
+class NoRouteModuleFoundException(Exception):
     pass
