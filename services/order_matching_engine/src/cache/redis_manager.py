@@ -18,19 +18,21 @@ class RedisManager:
 
         # create redis instance
         self.redis = AsyncRedisCache(
-            host=os.getenv("QUEUE_REDIS_HOST", "exchange-redis"),
+            host=os.getenv("QUEUE_REDIS_HOST", "139.59.18.104"),
             port=int(os.getenv("QUEUE_REDIS_PORT", 6379)),
             db=0
         )
         
     @classmethod
     def get_instance(cls) -> "RedisManager":
+        """Get the singleton instance of the RedisManager class."""
         if not cls.__instance:
             cls()
         return cls.__instance #type: ignore
 
     
     async def order_lister(self) -> Any:
+        """Get an order from the order queue."""
         order_data = await self.redis.dequeue("orders", block=True)
         return order_data
     

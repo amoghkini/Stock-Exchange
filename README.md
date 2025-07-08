@@ -89,3 +89,18 @@ Integrates with banks and payment providers to process fiat deposits and withdra
 17. Data Archival and Backup Service:
 
 Archives historical data and provides backup and restoration capabilities.
+
+
+
+
+
+ export PYTHONPATH="F:\Projects\Upload to github\2021\Stock-Exchange"
+ 
+ https://developers.binance.com/docs/binance-spot-api-docs/rest-api/trading-endpoints
+
+
+ docker run -d   --name eureka   --restart always   -p 8761:8761   --ulimit nofile=65536:65536   -e JAVA_OPTS=-Xmx512m   -e ENVIRONMENT=development   bitinit/eureka
+
+ docker run -d --name redis -p 6379:6379 redis:7.2
+
+ 

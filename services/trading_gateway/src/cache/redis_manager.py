@@ -11,6 +11,7 @@ class RedisManager:
     
     def __init__(self) -> None:
         if RedisManager.__instance:
+            # TODO: raise exception as SingletonClassException (Import it from common library)
             raise Exception("RedisManager is a singleton class. Please use get_instance funtion to reuse the existing instance.")
         else:
             logging.info("Going to create instance for the first time")
@@ -19,9 +20,9 @@ class RedisManager:
 
         # create redis instance
         self.redis = AsyncRedisCache(
-            host=os.getenv("QUEUE_REDIS_HOST", "exchange-redis"),
+            host=os.getenv("QUEUE_REDIS_HOST", "139.59.18.104"),
             port=int(os.getenv("QUEUE_REDIS_PORT", 6379)),
-            db=0
+            db=0,
         )
         
     @classmethod

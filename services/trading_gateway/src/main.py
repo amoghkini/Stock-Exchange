@@ -24,7 +24,7 @@ app.include_router(api_router)
 @app.on_event("startup")
 async def startup_event():
     """Register service with Eureka and start heartbeat task."""
-    eureka_url = os.environ.get("EUREKA_URL", "http://eureka:8761/eureka/")
+    eureka_url = os.environ.get("EUREKA_URL", "http://139.59.18.104:8761/eureka/")
     instance_port = 8000
     eureka_client = EurekaClient(APP_NAME, eureka_url, instance_port)
 

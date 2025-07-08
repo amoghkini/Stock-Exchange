@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Literal
+from dataclasses import dataclass, asdict
+from typing import Literal, Any, Dict
 
 from orderbook.order_side import OrderSide
 from orderbook.order_type import OrderType
@@ -21,9 +21,16 @@ class Order:
     order_place_timestamp: float
     last_order_update_timestamp: float
     message: str
-    
+
     def __hash__(self):
         return hash(self.order_id)
-    
+
     def __str__(self) -> str:
         return f"order_id: {self.order_id}"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    @staticmethod
+    def from_dict(data: Dict[str, Any]) -> "Order":
+        return Order(**data)

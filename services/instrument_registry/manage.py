@@ -19,12 +19,11 @@ def run():
     port = int(os.environ.get("PORT", 5000))
 
     if is_port_in_use(port):
-        click.echo(f"❌ Port {port} is already in use. Is another instance running?")
-        sys.exit(1)
+        click.echo(f"Port {port} is already in use. Is another instance running?")
+        # sys.exit(1)
 
-    click.echo(f"✅ Starting server on http://127.0.0.1:{port}")
-    app.run(host="0.0.0.0", port=port)
-
+    click.echo(f"Starting server on http://127.0.0.1:{port}")
+    app.run(host="0.0.0.0", port=port, debug=True)
 
 def is_port_in_use(port: int) -> bool:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

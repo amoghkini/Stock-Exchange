@@ -1,1 +1,9 @@
+Flask==2.2.5
+SQLAlchemy>=1.4
+asyncpg
+aioredis
+python-dotenv
+click
 gunicorn
+sentry-sdk
+prometheus_client

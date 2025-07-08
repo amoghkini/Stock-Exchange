@@ -9,8 +9,8 @@ from instrument_registry.config.prod_config import ProdConfig
 from instrument_registry.config.test_config import TestConfig
 
 
-DOTENV_PATH = os.path.join(os.path.dirname(__file__), "..", ".env")
-
+CONFIG_DIR = os.path.abspath(os.path.dirname(__file__))
+DOTENV_PATH = os.path.join(CONFIG_DIR, "..", "..", ".env")
 
 CONFIG_MAPPING: dict[str, Type[BaseConfig]] = {
     "dev": DevConfig,
@@ -19,6 +19,7 @@ CONFIG_MAPPING: dict[str, Type[BaseConfig]] = {
 }
 
 if os.path.exists(DOTENV_PATH):
+    print("Loading .env file")
     load_dotenv(DOTENV_PATH)
     
 

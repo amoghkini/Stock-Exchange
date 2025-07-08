@@ -10,7 +10,7 @@ class Orderbook:
     ) -> None:
         self.symbol = symbol
         self.bids = {}
-        self.asks = []
+        self.asks = {}
         # Make sure we read snapshot and replay messages before we start listning anything on this book.
         logging.info(f"Orderbook created for {self.symbol}")
         
@@ -36,7 +36,7 @@ class Orderbook:
     def get_best_bid(self):
         pass
     
-    def best_ask(self):
+    def get_best_ask(self):
         pass
     
     def get_last_traded_price(self):

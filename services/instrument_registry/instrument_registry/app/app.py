@@ -6,7 +6,7 @@ from flask.views import MethodView
 from instrument_registry.app.build_utils import BuildUtils
 from instrument_registry.app.exceptions import NoRouteModuleFoundException
 from instrument_registry.app.error_handlers import ErrorHandler
-from instrument_registry.app.lifecycle import AppLifeCycle
+from instrument_registry.app.app_life_cycle import AppLifeCycle
 from instrument_registry.config.config_manager import ConfigManager
 
 
@@ -19,7 +19,7 @@ class AppBuilder:
         self.app.config.from_object(self.app_config)
         
     def build(
-        self, 
+        self,
         app_module_name: str,
         **kwargs: Any
     ) -> Flask:

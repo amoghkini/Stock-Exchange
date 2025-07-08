@@ -1,4 +1,6 @@
 import logging
+from typing import Tuple
+
 from orderbook.order import Order
 from orderbook.orderbook import Orderbook
 
@@ -13,24 +15,41 @@ class OrderMatchingEngine:
         
     async def process_order_queue(
         self,
-        order
-    ):  
+        order_message: dict[str, Tuple[str, dict[str, Tuple[str, int, float]]]]
+    ) -> None:  
         # The payload should define the type such as create_order, cancel_order etc.
         # Based on the order type, create a data class from dict and pass it to orderbook.
         # We can have seaprate market data service connected to this engine which is responsible to return the market data. This is for adhoc requests. 
         # The engine should publish this data to pub sub channel which will then connect to websocket server.
         
+        message_type = order_message["type"]
+        order = order_message["data"]
+        
         symbol: str = order["symbol"]
         logging.info(f"Processing order: {order}")
-        if symbol not in self.orderbooks:
-            self.orderbooks[symbol] = Orderbook(symbol)
         
-        channel = f"order_fill:{order['order_id']}"
-        await self.redis.send_to_trading_gateway(channel, order)
-        await self.redis.redis.publish(channel, order)
-        
-        # Switch case based on order_type (create, amend, cancel)
-
+        match message_type:
+            case "CREATE_ORDER":
+                if symbol not in self.orderbooks:
+                    self.orderbooks[symbol] = Orderbook(symbol)
+                
+                channel = f"order_fill:{order['order_id']}"
+                await self.redis.send_to_trading_gateway(channel, order)
+                await self.redis.redis.publish(channel, order)
+            case "CANCEL_ORDER":
+                if symbol not in self.orderbooks:
+                    self.orderbooks[symbol] = Orderbook(symbol)
+                
+                channel = f"order_fill:{order['order_id']}"
+                await self.redis.send_to_trading_gateway(channel, order)
+                await self.redis.redis.publish(channel, order)
+            case "AMEND_ORDER":
+                if symbol not in self.orderbooks:
+                    self.orderbooks[symbol] = Orderbook(symbol)
+                channel = f"order_fill:{order['order_id']}"
+                await self.redis.send_to_trading_gateway(channel, order)
+                await self.redis.redis.publish(channel, order)
+      
     def process_market_data_queue(self):
         pass
     

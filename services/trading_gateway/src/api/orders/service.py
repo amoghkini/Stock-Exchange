@@ -14,9 +14,14 @@ class OrderService:
         
         # add order to queue
         redis = RedisManager.get_instance()
-        if os.getenv("wait_for_fills", "True") == "True":
-            response = await redis.send_order_and_await_for_fills(order_data.to_dict())
+        message = {
+            "type": "CREATE_ORDER", 
+            "data": order_data.to_dict()
+        }
+        
+        if os.getenv("wait_for_fills", "False") == "True":
+            response = await redis.send_order_and_await_for_fills(message)
         else:
-            response = await redis.send_order_to_queue(order_data.to_dict())
+            response = await redis.send_order_to_queue(message)
         
         return response
