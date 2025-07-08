@@ -1,11 +1,11 @@
-import os
 import logging
 import socket
-import platform
-import sys
 
 
-class SystemUtils:
+class NetworkUtils:
+    """
+    This class provides utility methods for working with networking.
+    """
     
     @staticmethod
     def get_local_ip() -> str:
@@ -29,27 +29,3 @@ class SystemUtils:
         except Exception as e:
             logging.error(f"Error getting local hostname: {e}")
             return "localhost"
-    
-    @staticmethod
-    def is_windows() -> bool:
-        return (
-            os.name == "nt"
-            and sys.platform == "win32"
-            and platform.system() == "Windows"
-        )  # noqa E501  # noqa E501
-    
-    @staticmethod
-    def is_linux() -> bool:
-        return (
-            os.name == "posix"
-            and platform.system() == "Linux"
-            and sys.platform in {"linux", "linux2"}
-        )  # noqa: E501
-
-    @staticmethod
-    def is_mac() -> bool:
-        return (
-            os.name == "posix"
-            and sys.platform == "darwin"
-            and platform.system() == "Darwin"
-        )  # noqa E501  # noqa E501
