@@ -4,7 +4,7 @@ import time
 from typing import Any, Optional
 
 import requests
-from exchange_manager.utils.system_utils import SystemUtils
+from exchange_manager.utils.network_utils import NetworkUtils
 
 
 class EurekaClient:
@@ -22,7 +22,7 @@ class EurekaClient:
         self.app_name = app_name
         self.eureka_url = eureka_url
         self.instance_port = instance_port
-        self.instance_ip = instance_ip or SystemUtils.get_local_ip()
+        self.instance_ip = instance_ip or NetworkUtils.get_local_ip()
         self.instance_id = instance_id or f"{self.instance_ip}:{self.app_name}:{self.instance_port}"
 
         self.__instance_data: dict[str, dict[str, Any]] = {
