@@ -24,8 +24,21 @@ instrument_registry_project/
 │
 ├── instruments/                    # Main application package (all Python code)
 │   ├── __init__.py
-│   ├── app.py                      # Main application entry point
-│   ├── config.py                   # Configuration management
+│   │
+│   ├── app/                        # App factory and registration (NEW)
+│   │   ├── __init__.py
+│   │   ├── factory.py              # App factory (moved from app.py)
+│   │   ├── blueprints.py           # Blueprint registration
+│   │   ├── error_handlers.py       # Error handlers registration
+│   │   └── extensions.py           # Extensions initialization
+│   │
+│   ├── config/                     # Configuration management (NEW)
+│   │   ├── __init__.py
+│   │   ├── base.py                 # Base configuration class
+│   │   ├── development.py          # Development configuration
+│   │   ├── testing.py              # Testing configuration
+│   │   ├── production.py           # Production configuration
+│   │   └── settings.py             # Settings loader/manager
 │   │
 │   ├── apps/                       # Application modules
 │   │   ├── __init__.py
@@ -33,13 +46,13 @@ instrument_registry_project/
 │   │       ├── __init__.py
 │   │       └── v1/                 # API version 1
 │   │           ├── __init__.py
-│   │           ├── instruments/    # Instruments blueprint (moved from v1 root)
+│   │           ├── instruments/    # Instruments blueprint
 │   │           │   ├── __init__.py
-│   │           │   ├── routes.py   # URL routing (moved from v1/routes.py)
-│   │           │   ├── views.py    # API views/controllers (moved from v1/views.py)
-│   │           │   ├── services.py # Business logic services (moved from v1/services.py)
-│   │           │   ├── models.py   # API-specific models (moved from v1/models.py)
-│   │           │   └── schemas.py  # Pydantic validation schemas (moved from v1/schemas.py)
+│   │           │   ├── routes.py   # URL routing
+│   │           │   ├── views.py    # API views/controllers
+│   │           │   ├── services.py # Business logic services
+│   │           │   ├── models.py   # API-specific models
+│   │           │   └── schemas.py  # Pydantic validation schemas
 │   │           │
 │   │           ├── admin/          # Admin blueprint
 │   │           │   ├── __init__.py
@@ -144,6 +157,21 @@ instrument_registry_project/
 │   │   ├── database.py
 │   │   ├── cache.py
 │   │   └── sample_data.py
+│   │
+│   ├── app/                        # App factory tests (NEW)
+│   │   ├── __init__.py
+│   │   ├── test_factory.py
+│   │   ├── test_blueprints.py
+│   │   ├── test_error_handlers.py
+│   │   └── test_extensions.py
+│   │
+│   ├── config/                     # Configuration tests (NEW)
+│   │   ├── __init__.py
+│   │   ├── test_base.py
+│   │   ├── test_development.py
+│   │   ├── test_testing.py
+│   │   ├── test_production.py
+│   │   └── test_settings.py
 │   │
 │   ├── apps/                       # Mirror apps structure
 │   │   ├── __init__.py
@@ -364,8 +392,6 @@ instrument_registry_project/
 │   ├── TESTING.md
 │   ├── MANAGEMENT_COMMANDS.md
 │   └── openapi/
-│       ├── openapi.yaml
-│       └── schemas/
 │
 ├── logs/                           # Log files (gitignored)
 │   └── .gitkeep
