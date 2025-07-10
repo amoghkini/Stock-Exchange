@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Boolean, Date
-from instrument_registry.database.base import BaseModel
+from services.instrument_registry.instrument_registry.database.base_model import BaseModel
 from instrument_registry.config.config_manager import ConfigManager
 
 
